@@ -1,0 +1,51 @@
+else if(matching_type == 'random'){
+    async function random_logic(){
+        let target_mbti;
+        let selected_user;
+        let applier_mbti;
+        await new Promise((resolve, reject) => {
+            db.query(`SELECT MBTI From user WHERE user_id=${user_id}`, (err, result) => {
+                if(err) throw err;
+                applier_mbti = result[0];
+                resolve(applier_mbti)
+            })
+        })
+        await new Promise((resolve, reject) => {
+            db.query(`SELECT best From mbti WHERE applier=${applier_mbti}`, (err, result) => {
+                if(err) throw err;
+                target_mbti = result[0];
+                resolve(target_mbti);
+            })
+        })
+        await new Promise((resolve, reject) => {
+            db.query(`SELECT * FROM user WHERE MBTI='${target_mbti}' and ${min_n} <= student_number and ${max_n} >= student_number`, (err, result) => {
+                if(err) throw err;
+                selected_list = result
+                for(let i = 0; i<result.length; i++){ 
+                    if(result[i].gender == gender && (university.includes(result[i].university))){
+                        selected_list.append(result[i]);
+                    }
+                    if(i == result.length -1){
+                        const rand = Math.floor(Math.random()*result.length);
+                        selected_user = selected_list[rand];
+                        resolve(selected_user);
+                        break;
+                    }
+                }
+            })
+        })
+        await new Promise((resolve, reject) => {
+            match_id = Math.random().toString(10).substr(2,11)
+            db.query(`INSERT INTO match_id (match_id, clientA, clientB, A_type, B_type) VALUES ('${match_id}', '${applicant_id}', '${selected_user.user_id}', '${applier_mbti}', '${target_mbti}')`, (err) => {
+                if(err) throw err;
+                resolve(1)
+            })
+        })
+        res.redirect('../chat');
+        res.send(selected_user);
+    }
+    random_logic();
+}
+else{
+    res.send('matching_type_error');
+}

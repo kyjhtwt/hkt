@@ -1,0 +1,28 @@
+components:
+  schemas:
+    user:
+      properties:
+        id:
+          type: string
+          definition: user's id
+        password:
+          type: string
+          definition: user's password          
+        name:
+          type: string
+          definition: user's name
+        description:
+          type: string
+          definition: user's description
+        student_number:
+          type: integer
+          definition: user's student_number
+        university:
+          type: string
+          definition: user's univ.
+        MBTI:
+          type: string
+          definition: user's MBTI
+        gender:
+          type: string
+          definition: user's gender
